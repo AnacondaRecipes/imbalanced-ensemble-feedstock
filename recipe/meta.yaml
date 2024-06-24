@@ -1,0 +1,64 @@
+{% set name = "imbalanced-ensemble" %}
+{% set version = "0.2.1" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  - path: requirements.txt
+  - url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/imbalanced-ensemble-{{ version }}.tar.gz
+    sha256: 77b53ade6749b76464919d2314589ee32c1cfb7b782afac1642c9980c7cf62f4
+
+build:
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  number: 0
+  skip: True  # [py>39]
+
+requirements:
+  host:
+    - python
+    - pip
+    - wheel
+    - setuptools
+  run:
+    - python
+    - numpy >=1.16.0
+    - scipy >=1.9.1
+    - pandas 
+    - joblib >=0.11
+    - scikit-learn
+    - matplotlib-base >=3.3.2
+    - seaborn >=0.13.2
+    - tqdm >=4.50.2
+
+test:
+  source_files:
+    - ./imbens/utils/tests
+  imports:
+    - imbens
+  commands:
+    - pip check
+    - pytest -v . -k " not (test_all_checks or test_plot_scatter or test_plot_2Dprojection_and_cardinality)"
+  requires:
+    - pip
+    # #- imbalanced-learn
+    # - numpydoc
+    # #- pydata-sphinx-theme
+    - pytest
+    # - pytest-cov
+    # - sphinx
+    #- sphinx-gallery
+    #- sphinxcontrib-bibtex
+    # - pytorch
+    # - torchvision
+about:
+  home: https://github.com/ZhiningLiu1998/imbalanced-ensemble
+  summary: Toolbox for ensemble learning on class-imbalanced dataset.
+  dev_url: https://github.com/ZhiningLiu1998/imbalanced-ensemble
+  license: MIT
+  license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    - AddYourGitHubIdHere
