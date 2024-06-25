@@ -25,9 +25,9 @@ requirements:
     - python
     - numpy >=1.16.0
     - scipy >=1.9.1
-    - pandas 
+    - pandas
     - joblib >=0.11
-    - scikit-learn
+    - scikit-learn >=1.3.0
     - matplotlib-base >=3.3.2
     - seaborn >=0.13.2
     - tqdm >=4.50.2
