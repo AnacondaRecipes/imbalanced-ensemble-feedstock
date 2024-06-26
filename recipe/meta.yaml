@@ -1,0 +1,70 @@
+{% set name = "imbalanced-ensemble" %}
+{% set version = "0.2.1" %}
+{% set commit_id = "62dc2c7fa0c66ed2a6ee4c082a7f46f84b4cfeca" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  - url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/imbalanced-ensemble-{{ version }}.tar.gz
+    sha256: 77b53ade6749b76464919d2314589ee32c1cfb7b782afac1642c9980c7cf62f4
+  # upstream forgot to include requirements.txt used to source dependencies
+  # in setup.py. The file is obtained at a commit id relative to the version
+  # 0.2.1 because there are no release tags after 0.2.0.
+  # See: https://github.com/ZhiningLiu1998/imbalanced-ensemble/blob/62dc2c7fa0c66ed2a6ee4c082a7f46f84b4cfeca/requirements.txt
+  - url: https://raw.githubusercontent.com/ZhiningLiu1998/{{ name }}/{{ commit_id }}/requirements.txt
+    sha256: 7c73475984d1a78e33d7ab50888bc2d635d3d44fe6996c7c50b84e5fc5ec3089
+
+build:
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  number: 0
+  skip: True  # [py<39]
+
+requirements:
+  host:
+    - python
+    - pip
+    - wheel
+    - setuptools
+  run:
+    - python
+    - numpy >=1.16.0
+    - scipy >=1.9.1
+    - pandas >=1.1.3
+    - joblib >=0.11
+    - scikit-learn >=1.3.0
+    - matplotlib-base >=3.3.2
+    - seaborn >=0.11.2
+    - tqdm >=4.50.2
+
+test:
+  source_files:
+    - ./imbens/utils/tests
+  imports:
+    - imbens
+  commands:
+    - pip check
+    # skip test_all_checks for a mismatch in string error coming from scikit-learn (probably different version)
+    # skip test_plot_scatter and test_plot_2Dprojection_and_cardinality for usage of a method `set_cmap`
+    # that is not there, probably due to the version of matplotlib used
+    - pytest -v . -k " not (test_all_checks or test_plot_scatter or test_plot_2Dprojection_and_cardinality)"
+  requires:
+    - pip
+    - pytest
+
+about:
+  home: https://github.com/ZhiningLiu1998/imbalanced-ensemble
+  summary: Toolbox for ensemble learning on class-imbalanced dataset.
+  description: |
+    IMBENS (imported as imbens) is a Python library for quick implementation, modification, evaluation, and 
+    visualization of ensemble learning from class-imbalanced data.
+  license: MIT
+  license_file: LICENSE
+  license_family: MIT
+  dev_url: https://github.com/ZhiningLiu1998/imbalanced-ensemble
+  doc_url: https://imbalanced-ensemble.readthedocs.io/
+
+extra:
+  recipe-maintainers:
+    - psteyer
