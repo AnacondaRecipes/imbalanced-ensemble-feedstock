@@ -1,18 +1,20 @@
 {% set name = "imbalanced-ensemble" %}
 {% set version = "0.2.1" %}
+{% set commit_id = "62dc2c7fa0c66ed2a6ee4c082a7f46f84b4cfeca" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  # we provide this file from our recipe folder because the upstream does not provide one,
-  # instead of patching the tarball. The file is obtained at a commit id relative to the version
-  # 0.2.1 because there are no release tags after 0.2.0.
-  # See: https://github.com/ZhiningLiu1998/imbalanced-ensemble/blob/62dc2c7fa0c66ed2a6ee4c082a7f46f84b4cfeca/requirements.txt
-  - path: requirements.txt
   - url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/imbalanced-ensemble-{{ version }}.tar.gz
     sha256: 77b53ade6749b76464919d2314589ee32c1cfb7b782afac1642c9980c7cf62f4
+  # upstream forgot to include requirements.txt used to source dependencies
+  # in setup.py. The file is obtained at a commit id relative to the version
+  # 0.2.1 because there are no release tags after 0.2.0.
+  # See: https://github.com/ZhiningLiu1998/imbalanced-ensemble/blob/62dc2c7fa0c66ed2a6ee4c082a7f46f84b4cfeca/requirements.txt
+  - url: https://raw.githubusercontent.com/ZhiningLiu1998/{{ name }}/{{ commit_id }}/requirements.txt
+    sha256: 7c73475984d1a78e33d7ab50888bc2d635d3d44fe6996c7c50b84e5fc5ec3089
 
 build:
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
